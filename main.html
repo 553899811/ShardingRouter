@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>分库分表路由计算器</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* 使内容居中显示 */
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4; /* 背景颜色 */
+        margin: 0;
+      }
+      h1 {
+        color: #333; /* 标题颜色 */
+      }
+      div {
+        margin: 15px 0;
+        width: 300px; /* 输入框和按钮的固定宽度 */
+        text-align: left; /* 文本左对齐 */
+      }
+      input[type="number"],
+      input[type="text"] {
+        width: 100%; /* 输入框宽度100% */
+        padding: 8px;
+        border: 1px solid #ccc; /* 边框颜色 */
+        border-radius: 4px; /* 圆角边框 */
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 输入框阴影 */
+        margin-bottom: 5px; /* 输入框与按钮间距 */
+      }
+      button {
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none; /* 去掉按钮边框 */
+        border-radius: 4px; /* 圆角 */
+        background-color: #007bff; /* 按钮背景色 */
+        color: white; /* 按钮文字颜色 */
+        transition: background-color 0.3s; /* 过渡效果 */
+      }
+      button:hover {
+        background-color: #0056b3; /* 悬停时变色 */
+      }
+      .quick-fill {
+        margin-left: 10px;
+        padding: 6px 10px;
+        font-size: 14px;
+        background-color: #6c757d; /* 快速填充按钮背景色 */
+        color: white; /* 快速填充按钮文字颜色 */
+      }
+      .quick-fill:hover {
+        background-color: #5a6268; /* 悬停时变色 */
+      }
+      #result {
+        margin-top: 20px; /* 结果与其他部分的间距 */
+        padding: 10px;
+        background-color: #e9ecef; /* 结果框背景色 */
+        border-radius: 4px; /* 圆角 */
+        border: 1px solid #ccc; /* 边框 */
+        width: 300px; /* 结果框宽度 */
+      }
+    </style>
+    <script>
+      // 自定义hashCode函数实现
+      function hashCode(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = (hash << 5) - hash + str.charCodeAt(i); // hash * 31 + char
+          hash |= 0; // 转换为32位整数
+        }
+        return hash;
+      }
+
+      function calculateHash() {
+        const key = document.getElementById("keyInput").value;
+        const libCount = parseInt(
+          document.getElementById("libCountInput").value
+        );
+        const tableCount = parseInt(
+          document.getElementById("tableInput").value
+        );
+
+        const hashValue = hashCode(key);
+        const resultLib = hashValue % libCount;
+        const resultTable = hashValue % tableCount;
+
+        document.getElementById("targetLibInput").value = resultLib;
+        document.getElementById("targetTableInput").value = resultTable;
+
+        document.getElementById(
+          "result"
+        ).innerText = `Hash: ${hashValue}\n库结果: ${resultLib}\n表结果: ${resultTable}`;
+      }
+
+      // 快速填充函数
+      function quickFill(libCount, tableCount) {
+        document.getElementById("libCountInput").value = libCount;
+        document.getElementById("tableInput").value = tableCount;
+      }
+    </script>
+  </head>
+  <body>
+    <h1>分库分表路由计算器</h1>
+    <div>
+      <label for="libCountInput">库数量:</label>
+      <input type="number" id="libCountInput" />
+      <button class="quick-fill" onclick="quickFill(2, 4)">2库4表</button>
+      <button class="quick-fill" onclick="quickFill(4, 256)">4库256表</button>
+      <button class="quick-fill" onclick="quickFill(4, 512)">4库512表</button>
+    </div>
+    <div>
+      <label for="tableInput">表数量:</label>
+      <input type="number" id="tableInput" />
+    </div>
+    <div>
+      <label for="keyInput">Key值:</label>
+      <input type="text" id="keyInput" />
+    </div>
+    <div>
+      <label for="targetLibInput">目标库:</label>
+      <input type="number" id="targetLibInput" readonly />
+    </div>
+    <div>
+      <label for="targetTableInput">目标表:</label>
+      <input type="number" id="targetTableInput" readonly />
+    </div>
+    <button onclick="calculateHash()">计算Hash</button>
+    <div id="result"></div>
+  </body>
+</html>
