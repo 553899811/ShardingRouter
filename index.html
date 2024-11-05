@@ -84,7 +84,7 @@
           document.getElementById("tableInput").value
         );
 
-        const hashValue = hashCode(key);
+        const hashValue = Math.abs(hashCode(key));
         const resultLib = hashValue % libCount;
         const resultTable = hashValue % tableCount;
 
@@ -109,6 +109,7 @@
       <label for="libCountInput">库数量:</label>
       <input type="number" id="libCountInput" />
       <button class="quick-fill" onclick="quickFill(2, 4)">2库4表</button>
+      <button class="quick-fill" onclick="quickFill(4, 32)">4库32表</button>
       <button class="quick-fill" onclick="quickFill(4, 256)">4库256表</button>
       <button class="quick-fill" onclick="quickFill(4, 512)">4库512表</button>
     </div>
